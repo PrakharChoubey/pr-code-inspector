@@ -7,3 +7,7 @@
 **/*.trace.db
 
 **/.settings/
+**/bin/
+.project
+.classpath
+.settings/

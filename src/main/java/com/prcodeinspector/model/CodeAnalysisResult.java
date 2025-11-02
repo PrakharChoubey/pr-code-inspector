@@ -12,112 +12,205 @@ import java.util.List;
 @Table(name = "code_analysis_results")
 public class CodeAnalysisResult {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@NotBlank
-	private String filePath;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pull_request_analysis_id")
+    private PullRequestAnalysis pullRequestAnalysis;
 
-	@NotBlank
-	private String fileName;
+    @NotBlank
+    private String filePath;
 
-	private String originalCode;
+    @NotBlank
+    private String fileName;
 
-	private String changedCode;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private AnalysisType type;
 
-	private String language;
+    private String originalCode;
 
-	@ElementCollection
-	@CollectionTable(name = "analysis_issues", joinColumns = @JoinColumn(name = "result_id"))
-	private List<AnalysisIssue> issues = new ArrayList<>();
+    private String changedCode;
 
-	@ElementCollection
-	@CollectionTable(name = "analysis_suggestions", joinColumns = @JoinColumn(name = "result_id"))
-	private List<AnalysisSuggestion> suggestions = new ArrayList<>();
+    private String language;
 
-	private String summary;
+    @ElementCollection
+    @CollectionTable(name = "analysis_issues", joinColumns = @JoinColumn(name = "result_id"))
+    private List<AnalysisIssue> issues = new ArrayList<>();
 
-	// Constructors
-	public CodeAnalysisResult() {
-	}
+    @ElementCollection
+    @CollectionTable(name = "analysis_suggestions", joinColumns = @JoinColumn(name = "result_id"))
+    private List<AnalysisSuggestion> suggestions = new ArrayList<>();
 
-	public CodeAnalysisResult(String filePath, String fileName) {
-		this.filePath = filePath;
-		this.fileName = fileName;
-	}
+    private String summary;
 
-	// Getters and Setters
-	public Long getId() {
-		return id;
-	}
+    @NotNull
+    private LocalDateTime analyzedAt;
 
-	public void setId(Long id) {
-		this.id = id;
-	}
+    private Double securityScore;
 
-	public String getFilePath() {
-		return filePath;
-	}
+    private Double performanceScore;
 
-	public void setFilePath(String filePath) {
-		this.filePath = filePath;
-	}
+    private Double bestPracticesScore;
 
-	public String getFileName() {
-		return fileName;
-	}
+    private Double overallScore;
 
-	public void setFileName(String fileName) {
-		this.fileName = fileName;
-	}
+    public enum AnalysisType {
+        ADDED, MODIFIED, DELETED
+    }
 
-	public String getOriginalCode() {
-		return originalCode;
-	}
+    // Constructors
+    public CodeAnalysisResult() {
+        this.analyzedAt = LocalDateTime.now();
+    }
 
-	public void setOriginalCode(String originalCode) {
-		this.originalCode = originalCode;
-	}
+    public CodeAnalysisResult(String filePath, String fileName, AnalysisType type) {
+        this.filePath = filePath;
+        this.fileName = fileName;
+        this.type = type;
+        this.analyzedAt = LocalDateTime.now();
+    }
 
-	public String getChangedCode() {
-		return changedCode;
-	}
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
 
-	public void setChangedCode(String changedCode) {
-		this.changedCode = changedCode;
-	}
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public String getLanguage() {
-		return language;
-	}
+    public PullRequestAnalysis getPullRequestAnalysis() {
+        return pullRequestAnalysis;
+    }
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    public void setPullRequestAnalysis(PullRequestAnalysis pullRequestAnalysis) {
+        this.pullRequestAnalysis = pullRequestAnalysis;
+    }
 
-	public List<AnalysisIssue> getIssues() {
-		return issues;
-	}
+    public String getFilePath() {
+        return filePath;
+    }
 
-	public void setIssues(List<AnalysisIssue> issues) {
-		this.issues = issues;
-	}
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
 
-	public List<AnalysisSuggestion> getSuggestions() {
-		return suggestions;
-	}
+    public String getFileName() {
+        return fileName;
+    }
 
-	public void setSuggestions(List<AnalysisSuggestion) suggestions) {
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public AnalysisType getType() {
+        return type;
+    }
+
+    public void setType(AnalysisType type) {
+        this.type = type;
+    }
+
+    public String getOriginalCode() {
+        return originalCode;
+    }
+
+    public void setOriginalCode(String originalCode) {
+        this.originalCode = originalCode;
+    }
+
+    public String getChangedCode() {
+        return changedCode;
+    }
+
+    public void setChangedCode(String changedCode) {
+        this.changedCode = changedCode;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public List<AnalysisIssue> getIssues() {
+        return issues;
+    }
+
+    public void setIssues(List<AnalysisIssue> issues) {
+        this.issues = issues;
+    }
+
+    public List<AnalysisSuggestion> getSuggestions() {
+        return suggestions;
+    }
+
+    public void setSuggestions(List<AnalysisSuggestion> suggestions) {
         this.suggestions = suggestions;
     }
 
-	public String getSummary() {
-		return summary;
-	}
+    public String getSummary() {
+        return summary;
+    }
 
-	public void setSummary(String summary) {
-		this.summary = summary;
-	}
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
+    public LocalDateTime getAnalyzedAt() {
+        return analyzedAt;
+    }
+
+    public void setAnalyzedAt(LocalDateTime analyzedAt) {
+        this.analyzedAt = analyzedAt;
+    }
+
+    public Double getSecurityScore() {
+        return securityScore;
+    }
+
+    public void setSecurityScore(Double securityScore) {
+        this.securityScore = securityScore;
+    }
+
+    public Double getPerformanceScore() {
+        return performanceScore;
+    }
+
+    public void setPerformanceScore(Double performanceScore) {
+        this.performanceScore = performanceScore;
+    }
+
+    public Double getBestPracticesScore() {
+        return bestPracticesScore;
+    }
+
+    public void setBestPracticesScore(Double bestPracticesScore) {
+        this.bestPracticesScore = bestPracticesScore;
+    }
+
+    public Double getOverallScore() {
+        return overallScore;
+    }
+
+    public void setOverallScore(Double overallScore) {
+        this.overallScore = overallScore;
+    }
+
+    @Override
+    public String toString() {
+        return "CodeAnalysisResult{" +
+                "id=" + id +
+                ", filePath='" + filePath + '\'' +
+                ", fileName='" + fileName + '\'' +
+                ", type=" + type +
+                ", language='" + language + '\'' +
+                ", overallScore=" + overallScore +
+                '}';
+    }
 }
