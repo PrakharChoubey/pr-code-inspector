@@ -1,0 +1,9 @@
+/target/
+.env
+
+# Spring Boot specific
+**/*.h2.db
+**/*.mv.db
+**/*.trace.db
+
+**/.settings/
