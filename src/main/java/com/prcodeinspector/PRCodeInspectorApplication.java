@@ -10,9 +10,9 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableAsync
 @EnableScheduling
 @EnableConfigurationProperties
-public class AICodeReviewAssistantApplication {
+public class PRCodeInspectorApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(AICodeReviewAssistantApplication.class, args);
+		SpringApplication.run(PRCodeInspectorApplication.class, args);
 	}
 }

@@ -1,15 +1,22 @@
 package com.prcodeinspector.model;
 
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Entity representing a pull request analysis request
- */
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "pull_request_analyses")
 public class PullRequestAnalysis {
@@ -33,6 +40,7 @@ public class PullRequestAnalysis {
 	private LocalDateTime createdAt;
 
 	@NotNull
+	@Enumerated(EnumType.STRING)
 	private AnalysisStatus status;
 
 	private String commitSha;
@@ -44,7 +52,6 @@ public class PullRequestAnalysis {
 
 	private String errorMessage;
 
-	@Enumerated(EnumType.STRING)
 	public enum AnalysisStatus {
 		PENDING, IN_PROGRESS, COMPLETED, FAILED, CANCELLED
 	}

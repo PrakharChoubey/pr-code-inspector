@@ -19,6 +19,12 @@ public class AnalysisSuggestion {
 
 	private Integer lineNumber;
 
+	private String codeSnippet;
+
+	private String suggestedCode;
+
+	private String benefits;
+
 	private String effort; // LOW, MEDIUM, HIGH
 
 	// Constructors
@@ -72,6 +78,30 @@ public class AnalysisSuggestion {
 		this.lineNumber = lineNumber;
 	}
 
+	public String getCodeSnippet() {
+		return codeSnippet;
+	}
+
+	public void setCodeSnippet(String codeSnippet) {
+		this.codeSnippet = codeSnippet;
+	}
+
+	public String getSuggestedCode() {
+		return suggestedCode;
+	}
+
+	public void setSuggestedCode(String suggestedCode) {
+		this.suggestedCode = suggestedCode;
+	}
+
+	public String getBenefits() {
+		return benefits;
+	}
+
+	public void setBenefits(String benefits) {
+		this.benefits = benefits;
+	}
+
 	public String getEffort() {
 		return effort;
 	}
@@ -80,4 +110,9 @@ public class AnalysisSuggestion {
 		this.effort = effort;
 	}
 
+	@Override
+	public String toString() {
+		return "AnalysisSuggestion{" + "type='" + type + '\'' + ", title='" + title + '\'' + ", effort='" + effort
+				+ '\'' + '}';
+	}
 }

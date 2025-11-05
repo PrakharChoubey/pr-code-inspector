@@ -2,7 +2,6 @@ package com.prcodeinspector.model;
 
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 
 @Embeddable
 public class AnalysisIssue {
@@ -22,6 +21,10 @@ public class AnalysisIssue {
 	private String filePath;
 
 	private Integer lineNumber;
+
+	private String codeSnippet;
+
+	private String recommendation;
 
 	// Constructors
 	public AnalysisIssue() {
@@ -83,4 +86,25 @@ public class AnalysisIssue {
 		this.lineNumber = lineNumber;
 	}
 
+	public String getCodeSnippet() {
+		return codeSnippet;
+	}
+
+	public void setCodeSnippet(String codeSnippet) {
+		this.codeSnippet = codeSnippet;
+	}
+
+	public String getRecommendation() {
+		return recommendation;
+	}
+
+	public void setRecommendation(String recommendation) {
+		this.recommendation = recommendation;
+	}
+
+	@Override
+	public String toString() {
+		return "AnalysisIssue{" + "category='" + category + '\'' + ", severity='" + severity + '\'' + ", title='"
+				+ title + '\'' + '}';
+	}
 }

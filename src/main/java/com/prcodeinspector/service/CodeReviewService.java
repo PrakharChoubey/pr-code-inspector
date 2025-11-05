@@ -33,6 +33,9 @@ public class CodeReviewService {
 	private GitHubService gitHubService;
 
 	@Autowired
+	private OpenAIClientService openAIClientService;
+
+	@Autowired
 	private PullRequestAnalysisRepository analysisRepository;
 
 	@Autowired
@@ -55,16 +58,24 @@ public class CodeReviewService {
 
 			if (existingAnalysis != null
 					&& existingAnalysis.getStatus() == PullRequestAnalysis.AnalysisStatus.COMPLETED) {
+				logger.info("Analysis already exists for PR: {}/{}#{}", owner, repository, prNumber);
 				return CompletableFuture.completedFuture(existingAnalysis);
 			}
 
 			PullRequestAnalysis analysis = new PullRequestAnalysis(owner, repository, "");
 			analysis.setPullRequestNumber(prNumber);
+			analysis.setStatus(PullRequestAnalysis.AnalysisStatus.IN_PROGRESS);
 			analysisRepository.save(analysis);
 
 			// Get PR information and files
-			
+			GitHubService.PullRequestInfo prInfo = gitHubService.getPullRequestInfo(owner, repository, prNumber);
+			analysis.setBranchName(prInfo.getTitle());
+
+			List<GitHubService.PullRequestFile> prFiles = gitHubService.getPullRequestFiles(owner, repository,
+					prNumber);
 			Map<String, String> codeFiles = gitHubService.getCodeFilesForAnalysis(owner, repository, prNumber);
+
+			logger.info("Found {} files to analyze for PR: {}/{}#{}", codeFiles.size(), owner, repository, prNumber);
 
 			// Analyze each file
 			List<CodeAnalysisResult> results = new ArrayList<>();
@@ -78,8 +89,15 @@ public class CodeReviewService {
 						logger.warn("Skipping file {} due to size limit", filePath);
 						continue;
 					}
-					// analyze code
+
+					CodeAnalysisResult result = openAIClientService.analyzeCode(filePath, getFileName(filePath),
+							getLanguageFromFileName(filePath), code);
+
+					result.setPullRequestAnalysis(analysis);
+					results.add(result);
+
 					// Save individual result
+					resultRepository.save(result);
 
 				} catch (Exception e) {
 					logger.error("Failed to analyze file: {}", filePath, e);
@@ -90,10 +108,26 @@ public class CodeReviewService {
 			analysis.setStatus(PullRequestAnalysis.AnalysisStatus.COMPLETED);
 			analysisRepository.save(analysis);
 
+			logger.info("Analysis completed for PR: {}/{}#{}", owner, repository, prNumber);
+
 			return CompletableFuture.completedFuture(analysis);
 
 		} catch (Exception e) {
+			logger.error("Failed to analyze PR: {}/{}#{}", owner, repository, prNumber, e);
+
 			// Update analysis with error
+			PullRequestAnalysis analysis = null;
+			try {
+				analysis = analysisRepository.findByOwnerRepositoryAndPRNumber(owner, repository, prNumber);
+				if (analysis != null) {
+					analysis.setStatus(PullRequestAnalysis.AnalysisStatus.FAILED);
+					analysis.setErrorMessage(e.getMessage());
+					analysisRepository.save(analysis);
+				}
+			} catch (Exception updateException) {
+				logger.error("Failed to update analysis with error", updateException);
+			}
+
 			return CompletableFuture.failedFuture(e);
 		}
 	}
@@ -107,7 +141,7 @@ public class CodeReviewService {
 			throw new IllegalArgumentException("File size exceeds limit: " + code.length());
 		}
 
-		return null;
+		return openAIClientService.analyzeCode(filePath, getFileName(filePath), language, code);
 	}
 
 	public Optional<PullRequestAnalysis> getAnalysis(Long analysisId) {
@@ -147,6 +181,8 @@ public class CodeReviewService {
 		AnalysisSummary summary = new AnalysisSummary();
 		summary.setAnalysisId(analysisId);
 		summary.setTotalFiles(results.size());
+		summary.setTotalIssues(0);
+		summary.setTotalSuggestions(0);
 		summary.setAverageScores(new HashMap<>());
 
 		Map<String, Integer> issuesBySeverity = new HashMap<>();
@@ -210,14 +246,28 @@ public class CodeReviewService {
 	private String getLanguageFromFileName(String fileName) {
 		if (fileName.endsWith(".java"))
 			return "java";
-		if (fileName.endsWith(".js"))
+		if (fileName.endsWith(".js") || fileName.endsWith(".jsx"))
 			return "javascript";
-		if (fileName.endsWith(".ts"))
+		if (fileName.endsWith(".ts") || fileName.endsWith(".tsx"))
 			return "typescript";
 		if (fileName.endsWith(".py"))
 			return "python";
 		if (fileName.endsWith(".go"))
 			return "go";
+		if (fileName.endsWith(".rb"))
+			return "ruby";
+		if (fileName.endsWith(".php"))
+			return "php";
+		if (fileName.endsWith(".cpp") || fileName.endsWith(".cc"))
+			return "cpp";
+		if (fileName.endsWith(".c"))
+			return "c";
+		if (fileName.endsWith(".cs"))
+			return "csharp";
+		if (fileName.endsWith(".kt"))
+			return "kotlin";
+		if (fileName.endsWith(".swift"))
+			return "swift";
 		return "unknown";
 	}
 
