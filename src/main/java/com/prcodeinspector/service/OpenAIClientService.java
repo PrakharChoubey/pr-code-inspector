@@ -156,6 +156,12 @@ public class OpenAIClientService {
 
 			// Parse suggestions
 			List<Map<String, Object>> suggestionsList = (List<Map<String, Object>>) responseMap.get("suggestions");
+			if (suggestionsList != null) {
+				for (Map<String, Object> suggestionMap : suggestionsList) {
+					AnalysisSuggestion suggestion = parseSuggestion(suggestionMap);
+					result.getSuggestions().add(suggestion);
+				}
+			}
 
 			return result;
 
@@ -191,6 +197,19 @@ public class OpenAIClientService {
 		return issue;
 	}
 
+	private AnalysisSuggestion parseSuggestion(Map<String, Object> suggestionMap) {
+		AnalysisSuggestion suggestion = new AnalysisSuggestion();
+		suggestion.setType((String) suggestionMap.get("type"));
+		suggestion.setTitle((String) suggestionMap.get("title"));
+		suggestion.setDescription((String) suggestionMap.get("description"));
+		suggestion.setLineNumber(
+				suggestionMap.get("lineNumber") != null ? ((Number) suggestionMap.get("lineNumber")).intValue() : null);
+		suggestion.setCodeSnippet((String) suggestionMap.get("codeSnippet"));
+		suggestion.setSuggestedCode((String) suggestionMap.get("suggestedCode"));
+		suggestion.setBenefits((String) suggestionMap.get("benefits"));
+		suggestion.setEffort((String) suggestionMap.get("effort"));
+		return suggestion;
+	}
 
 	private Double getDouble(Object value) {
 		if (value instanceof Number) {

@@ -1,186 +1,180 @@
 {
-  "version": "1.0",
-  "lastUpdated": "2025-11-02",
-  "description": "AI Code Review Assistant analysis rules and configurations",
-  
-  "security": {
-    "rules": [
-      {
-        "id": "SQL001",
-        "category": "SQL Injection",
-        "severity": "HIGH",
-        "pattern": "CREATE.*TABLE.*WITHOUT.*ROW.*LEVEL.*SECURITY",
-        "description": "Missing Row Level Security (RLS) in database tables",
-        "recommendation": "Implement proper RLS policies for data access control"
-      },
-      {
-        "id": "AUTH001",
-        "category": "Authentication",
-        "severity": "HIGH", 
-        "pattern": "bcrypt.*\\.hashSync.*\\(\\s*\\d{2,}\\s*",
-        "description": "Weak password hashing iteration count detected",
-        "recommendation": "Use bcrypt with at least 10 rounds or consider using Argon2"
-      },
-      {
-        "id": "AUTH002",
-        "category": "Authentication",
-        "severity": "MEDIUM",
-        "pattern": "if\\s*\\(\\\\w+\\.checkPassword\\s*\\(\\s*.*\\\\s*",
-        "description": "Potential password validation timing attack",
-        "recommendation": "Use constant-time password comparison"
-      }
-    ],
-    "keywords": [
-      "sql injection",
-      "authentication bypass",
-      "xss", 
-      "csrf",
-      "broken access control",
-      "security headers",
-      "input validation",
-      "output encoding",
-      "secure communication",
-      "password storage"
-    ]
-  },
-  
-  "performance": {
-    "rules": [
-      {
-        "id": "PERF001",
-        "category": "Database",
-        "severity": "HIGH",
-        "pattern": "SELECT\\s+\\*\\s+FROM",
-        "description": "SELECT * queries can be inefficient",
-        "recommendation": "Select only required columns to improve performance"
-      },
-      {
-        "id": "PERF002", 
-        "category": "Memory",
-        "severity": "MEDIUM",
-        "pattern": "new\\s+Array\\(\\s*10_000\\s*\\)",
-        "description": "Large memory allocation detected",
-        "recommendation": "Consider using more memory-efficient data structures or streaming"
-      }
-    ],
-    "patterns": [
-      "N+1 queries",
-      "memory leaks", 
-      "inefficient loops",
-      "blocking I/O",
-      "unnecessary object creation",
-      "large data transfers",
-      "inefficient algorithms"
-    ]
-  },
-  
-  "bestPractices": {
-    "java": {
-      "rules": [
-        {
-          "id": "JAVA001",
-          "category": "Spring Boot",
-          "severity": "MEDIUM",
-          "pattern": "@SpringBootApplication\\s+public.*class.*Application\\s*{",
-          "description": "Main application class should be in a top-level package",
-          "recommendation": "Ensure @SpringBootApplication is in a top-level package or use @ComponentScan explicitly"
-        },
-        {
-          "id": "JAVA002",
-          "category": "Error Handling",
-          "severity": "MEDIUM",
-          "pattern": "catch.*Exception.*\\{",
-          "description": "Catching generic Exception is not recommended",
-          "recommendation": "Catch specific exceptions to provide better error handling"
-        }
-      ],
-      "conventions": [
-        "Use @Component, @Service, @Repository annotations appropriately",
-        "Implement proper logging using SLF4J",
-        "Use @Value for configuration properties",
-        "Follow naming conventions for REST endpoints",
-        "Use proper exception handling strategies"
-      ]
-    },
-    "javascript": {
-      "rules": [
-        {
-          "id": "JS001",
-          "category": "Code Quality",
-          "severity": "LOW",
-          "pattern": "var\\s+",
-          "description": "Prefer 'const' or 'let' over 'var'",
-          "recommendation": "Use 'const' for constants and 'let' for variables"
-        }
-      ],
-      "conventions": [
-        "Use ES6+ features when possible",
-        "Implement proper error handling",
-        "Use async/await for asynchronous operations",
-        "Follow consistent naming conventions"
-      ]
-    }
-  },
-  
-  "frameworks": {
-    "springBoot": {
-      "rules": [
-        {
-          "id": "SPR001",
-          "category": "Configuration",
-          "severity": "HIGH",
-          "pattern": "application\\.properties",
-          "description": "Use @ConfigurationProperties for structured configuration",
-          "recommendation": "Create configuration classes with @ConfigurationProperties"
-        }
-      ],
-      "recommendations": [
-        "Use @ConfigurationProperties for type-safe configuration",
-        "Implement proper logging levels",
-        "Use @Transactional appropriately",
-        "Follow RESTful API design principles",
-        "Use proper dependency injection practices"
-      ]
-    },
-    "nodejs": {
-      "rules": [
-        {
-          "id": "NODE001",
-          "category": "Security",
-          "severity": "HIGH",
-          "pattern": "eval\\s*\\(",
-          "description": "Use of eval() is dangerous and should be avoided",
-          "recommendation": "Replace eval() with safer alternatives like JSON.parse()"
-        }
-      ]
-    }
-  },
-  
-  "customRules": {
-    "enabled": true,
-    "userDefined": [],
-    "filePath": "classpath:custom-rules.json"
-  },
-  
-  "scoring": {
-    "categories": [
-      "security",
-      "performance", 
-      "bestPractices",
-      "maintainability"
-    ],
-    "weights": {
-      "security": 0.4,
-      "performance": 0.3,
-      "bestPractices": 0.2,
-      "maintainability": 0.1
-    },
-    "thresholds": {
-      "excellent": 90,
-      "good": 75,
-      "acceptable": 60,
-      "poor": 45,
-      "critical": 30
-    }
-  }
+	"version": "1.0",
+	"lastUpdated": "2025-11-02",
+	"description": "AI Code Review Assistant analysis rules and configurations",
+	"security": {
+		"rules": [
+			{
+				"id": "SQL001",
+				"category": "SQL Injection",
+				"severity": "HIGH",
+				"pattern": "CREATE.*TABLE.*WITHOUT.*ROW.*LEVEL.*SECURITY",
+				"description": "Missing Row Level Security (RLS) in database tables",
+				"recommendation": "Implement proper RLS policies for data access control"
+			},
+			{
+				"id": "AUTH001",
+				"category": "Authentication",
+				"severity": "HIGH",
+				"pattern": "bcrypt.*\\.hashSync.*\\(\\s*\\d{2,}\\s*",
+				"description": "Weak password hashing iteration count detected",
+				"recommendation": "Use bcrypt with at least 10 rounds or consider using Argon2"
+			},
+			{
+				"id": "AUTH002",
+				"category": "Authentication",
+				"severity": "MEDIUM",
+				"pattern": "if\\s*\\(\\\\w+\\.checkPassword\\s*\\(\\s*.*\\\\s*",
+				"description": "Potential password validation timing attack",
+				"recommendation": "Use constant-time password comparison"
+			}
+		],
+		"keywords": [
+			"sql injection",
+			"authentication bypass",
+			"xss",
+			"csrf",
+			"broken access control",
+			"security headers",
+			"input validation",
+			"output encoding",
+			"secure communication",
+			"password storage"
+		]
+	},
+	"performance": {
+		"rules": [
+			{
+				"id": "PERF001",
+				"category": "Database",
+				"severity": "HIGH",
+				"pattern": "SELECT\\s+\\*\\s+FROM",
+				"description": "SELECT * queries can be inefficient",
+				"recommendation": "Select only required columns to improve performance"
+			},
+			{
+				"id": "PERF002",
+				"category": "Memory",
+				"severity": "MEDIUM",
+				"pattern": "new\\s+Array\\(\\s*10_000\\s*\\)",
+				"description": "Large memory allocation detected",
+				"recommendation": "Consider using more memory-efficient data structures or streaming"
+			}
+		],
+		"patterns": [
+			"N+1 queries",
+			"memory leaks",
+			"inefficient loops",
+			"blocking I/O",
+			"unnecessary object creation",
+			"large data transfers",
+			"inefficient algorithms"
+		]
+	},
+	"bestPractices": {
+		"java": {
+			"rules": [
+				{
+					"id": "JAVA001",
+					"category": "Spring Boot",
+					"severity": "MEDIUM",
+					"pattern": "@SpringBootApplication\\s+public.*class.*Application\\s*{",
+					"description": "Main application class should be in a top-level package",
+					"recommendation": "Ensure @SpringBootApplication is in a top-level package or use @ComponentScan explicitly"
+				},
+				{
+					"id": "JAVA002",
+					"category": "Error Handling",
+					"severity": "MEDIUM",
+					"pattern": "catch.*Exception.*\\{",
+					"description": "Catching generic Exception is not recommended",
+					"recommendation": "Catch specific exceptions to provide better error handling"
+				}
+			],
+			"conventions": [
+				"Use @Component, @Service, @Repository annotations appropriately",
+				"Implement proper logging using SLF4J",
+				"Use @Value for configuration properties",
+				"Follow naming conventions for REST endpoints",
+				"Use proper exception handling strategies"
+			]
+		},
+		"javascript": {
+			"rules": [
+				{
+					"id": "JS001",
+					"category": "Code Quality",
+					"severity": "LOW",
+					"pattern": "var\\s+",
+					"description": "Prefer 'const' or 'let' over 'var'",
+					"recommendation": "Use 'const' for constants and 'let' for variables"
+				}
+			],
+			"conventions": [
+				"Use ES6+ features when possible",
+				"Implement proper error handling",
+				"Use async/await for asynchronous operations",
+				"Follow consistent naming conventions"
+			]
+		}
+	},
+	"frameworks": {
+		"springBoot": {
+			"rules": [
+				{
+					"id": "SPR001",
+					"category": "Configuration",
+					"severity": "HIGH",
+					"pattern": "application\\.properties",
+					"description": "Use @ConfigurationProperties for structured configuration",
+					"recommendation": "Create configuration classes with @ConfigurationProperties"
+				}
+			],
+			"recommendations": [
+				"Use @ConfigurationProperties for type-safe configuration",
+				"Implement proper logging levels",
+				"Use @Transactional appropriately",
+				"Follow RESTful API design principles",
+				"Use proper dependency injection practices"
+			]
+		},
+		"nodejs": {
+			"rules": [
+				{
+					"id": "NODE001",
+					"category": "Security",
+					"severity": "HIGH",
+					"pattern": "eval\\s*\\(",
+					"description": "Use of eval() is dangerous and should be avoided",
+					"recommendation": "Replace eval() with safer alternatives like JSON.parse()"
+				}
+			]
+		}
+	},
+	"customRules": {
+		"enabled": true,
+		"userDefined": [],
+		"filePath": "classpath:custom-rules.json"
+	},
+	"scoring": {
+		"categories": [
+			"security",
+			"performance",
+			"bestPractices",
+			"maintainability"
+		],
+		"weights": {
+			"security": 0.4,
+			"performance": 0.3,
+			"bestPractices": 0.2,
+			"maintainability": 0.1
+		},
+		"thresholds": {
+			"excellent": 90,
+			"good": 75,
+			"acceptable": 60,
+			"poor": 45,
+			"critical": 30
+		}
+	}
 }
